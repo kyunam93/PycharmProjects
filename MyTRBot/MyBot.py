@@ -302,7 +302,7 @@ class MyBot(QMainWindow, form_class):
         print(account, code)
 
         # Tr - opw00018
-        # 입력 데이터 설정
+        # SetInputValue 입력 데이터 설정
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)  # 전문 조회할 보유계좌번호 10자리
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "비밀번호", "")  # 사용안함, 공백
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "비밀번호입력매체구분", "00")  # 공백불가
@@ -311,13 +311,15 @@ class MyBot(QMainWindow, form_class):
         # TR을 서버로 전송
         self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0, "5100")  # 0은 반복횟수
 
-        # Tr -
+        # Tr - opt10075
+        # SetInputValue 입력 데이터 설정
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)  # 전문 조회할 보유계좌번호 10자리
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "전체종목구분 ", "0")  # 전체종목구분 = 0:전체, 1:종목
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "매매구분", "0")  # 매매구분 = 0:전체, 1:매도, 2:매수
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", "str(code)")  # 종목코드 = 전문 조회할 종목코드 (공백허용, 공백입력시 전체종목구분 "0" 입력하여 전체 종목 대상으로 조회)
         self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "체결구분", "1")  # 체결구분 = 0:전체, 2:체결, 1:미체결
 
+        # CommRqData TR을 서버로 전송
         self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "미체결요청", "opt10075", 0, "5200")  # 0은 반복횟수
 
     def selectOutstandingOrder(self):
