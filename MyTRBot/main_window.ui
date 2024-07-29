@@ -46,7 +46,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>630</x>
       <y>10</y>
       <width>70</width>
       <height>33</height>
@@ -62,7 +62,7 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>630</x>
       <y>50</y>
       <width>70</width>
       <height>33</height>
@@ -78,7 +78,7 @@
    <widget class="QTextEdit" name="searchItemTextEdit">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>710</x>
       <y>10</y>
       <width>149</width>
       <height>33</height>
@@ -88,7 +88,7 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>630</x>
       <y>90</y>
       <width>70</width>
       <height>33</height>
@@ -104,7 +104,7 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>630</x>
       <y>130</y>
       <width>70</width>
       <height>33</height>
@@ -120,7 +120,7 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>630</x>
       <y>170</y>
       <width>70</width>
       <height>33</height>
@@ -136,7 +136,7 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>630</x>
       <y>210</y>
       <width>70</width>
       <height>33</height>
@@ -152,7 +152,7 @@
    <widget class="QTextEdit" name="ordernumberTextEdit">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>710</x>
       <y>210</y>
       <width>149</width>
       <height>33</height>
@@ -162,7 +162,7 @@
    <widget class="QTextEdit" name="itemCodeTextEdit">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>710</x>
       <y>50</y>
       <width>149</width>
       <height>33</height>
@@ -172,7 +172,7 @@
    <widget class="QSpinBox" name="volumeSpinBox">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>710</x>
       <y>90</y>
       <width>149</width>
       <height>33</height>
@@ -182,7 +182,7 @@
    <widget class="QSpinBox" name="priceSpinBox">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>710</x>
       <y>130</y>
       <width>149</width>
       <height>33</height>
@@ -195,7 +195,7 @@
    <widget class="QComboBox" name="tradeGubunComboBox">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>710</x>
       <y>170</y>
       <width>149</width>
       <height>33</height>
@@ -205,9 +205,9 @@
    <widget class="QComboBox" name="gubunComboBox">
     <property name="geometry">
      <rect>
-      <x>880</x>
+      <x>870</x>
       <y>130</y>
-      <width>109</width>
+      <width>120</width>
       <height>33</height>
      </rect>
     </property>
@@ -215,9 +215,9 @@
    <widget class="QPushButton" name="searchItemButton">
     <property name="geometry">
      <rect>
-      <x>880</x>
+      <x>870</x>
       <y>10</y>
-      <width>109</width>
+      <width>120</width>
       <height>33</height>
      </rect>
     </property>
@@ -228,9 +228,9 @@
    <widget class="QPushButton" name="cancelPushButton">
     <property name="geometry">
      <rect>
-      <x>930</x>
+      <x>920</x>
       <y>250</y>
-      <width>59</width>
+      <width>60</width>
       <height>44</height>
      </rect>
     </property>
@@ -241,9 +241,9 @@
    <widget class="QPushButton" name="changePushButton">
     <property name="geometry">
      <rect>
-      <x>860</x>
+      <x>850</x>
       <y>250</y>
-      <width>59</width>
+      <width>60</width>
       <height>44</height>
      </rect>
     </property>
@@ -254,9 +254,9 @@
    <widget class="QPushButton" name="sellPushButton">
     <property name="geometry">
      <rect>
-      <x>790</x>
+      <x>780</x>
       <y>250</y>
-      <width>59</width>
+      <width>60</width>
       <height>44</height>
      </rect>
     </property>
@@ -267,9 +267,9 @@
    <widget class="QPushButton" name="buyPushButton">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>710</x>
       <y>250</y>
-      <width>59</width>
+      <width>60</width>
       <height>44</height>
      </rect>
     </property>
@@ -287,7 +287,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -296,10 +296,10 @@
      <widget class="QTableWidget" name="stockListTableWidget">
       <property name="geometry">
        <rect>
-        <x>2</x>
-        <y>1</y>
-        <width>490</width>
-        <height>201</height>
+        <x>0</x>
+        <y>0</y>
+        <width>493</width>
+        <height>203</height>
        </rect>
       </property>
      </widget>
@@ -313,8 +313,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>740</width>
-        <height>201</height>
+        <width>493</width>
+        <height>203</height>
        </rect>
       </property>
      </widget>
