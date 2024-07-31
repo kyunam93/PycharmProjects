@@ -2,7 +2,7 @@ class DataModel:
     def __init__(self):
         self.itemList = []
         self.stockBalanceList = []
-        self.outstandingList = []
+        self.outstandingBalanceList = []
 
     class ItemInfo:
         def __init__(self, itemCode, itemName):
@@ -19,15 +19,15 @@ class DataModel:
             self.estmateProfit = estmateProfit
             self.profitRate = profitRate
 
-    class Outstanding:
-        def __init__(self, itemCode, itemName, orderNumber, orderVolume, orderPrice, outstandingVolume, tradeGubun, orderTime, currentPrice):
+    class OutstandingBalance:
+        def __init__(self, itemCode, itemName, orderNumber, orderVolume, orderPrice, outStandingVolume, tradeGubun,
+                     orderTime, currentPrice):
             self.itemCode = itemCode
             self.itemName = itemName
             self.orderNumber = orderNumber
             self.orderVolume = orderVolume
             self.orderPrice = orderPrice
-            self.outstandingVolume = outstandingVolume
+            self.outStandingVolume = outStandingVolume
             self.tradeGubun = tradeGubun
             self.orderTime = orderTime
             self.currentPrice = currentPrice
-
