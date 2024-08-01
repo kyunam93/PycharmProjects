@@ -5,6 +5,13 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QAxContainer import *
 
+import matplotlib.pyplot as plt
+import mplfinance as matfin
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvasQTAgg
+import matplotlib.gridspec as gridspec
+import matplotlib.ticker as ticker
+
+
 # as : 가명을 만들어 주는 키워드
 import dataModel as dm
 
@@ -134,12 +141,12 @@ class MyBot(QMainWindow, form_class):
         # 조회 버튼 클릭시 함수 호출
         print("조회 버튼 클릭")
 
-        msg_box = QMessageBox()
-        msg_box.setText("조회할거임?")
-        msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-
-        ret = msg_box.exec()
-        print(ret)
+        # msg_box = QMessageBox()
+        # msg_box.setText("조회할거임?")
+        # msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        #
+        # ret = msg_box.exec()
+        # print(ret)
 
         itemName = self.searchItemTextEdit.toPlainText()
 
@@ -285,8 +292,9 @@ class MyBot(QMainWindow, form_class):
                                                          sRQName, index, "주문구분").strip(" ").strip("+").strip("-")
                     orderTime = self.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName,
                                                         index, "시간").strip(" ")
-                    currentPrice = self.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode,
-                                                           sRQName, index, "현재가").strip(" ")
+                    currentPrice = abs(
+                        int(self.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode,
+                                                    sRQName, index, "현재가").strip(" ")))
 
                     # 계좌 정보가 담긴 객체 생성하여 변수에 담기
                     outstanding = dm.DataModel.OutstandingBalance(itemCode, itemName, orderNumber, orderVolume,
@@ -318,10 +326,10 @@ class MyBot(QMainWindow, form_class):
                 orderNumber = self.kiwoom.dynamicCall("GetChejanData(int)", 9203).strip(" ")  # 주문번호(신규체결시의 번호)
                 orderPrice = self.kiwoom.dynamicCall("GetChejanData(int)", 901).strip(" ")  # 주문번호
                 orderVolume = self.kiwoom.dynamicCall("GetChejanData(int)", 900).strip(" ")  # 주문수량
-                outStandingVolume = self.kiwoom.dynamicCall("GetChejanData(int)", 902).strip(" ")  # 미체결수량
+                outStandingVolume = int(self.kiwoom.dynamicCall("GetChejanData(int)", 902).strip(" "))  # 미체결수량
                 tradeGubun = self.kiwoom.dynamicCall("GetChejanData(int)", 905).strip(" ").strip("+").strip("-")  # 주문구분
                 orderTime = self.kiwoom.dynamicCall("GetChejanData(int)", 908).strip(" ")  # 주문/체결시간
-                currentPrice = self.kiwoom.dynamicCall("GetChejanData(int)", 10).strip(" ")  # 현재가
+                currentPrice = abs(int(self.kiwoom.dynamicCall("GetChejanData(int)", 10).strip(" ")))  # 현재가
 
                 for itemIndex in range(len(self.myModel.outstandingBalanceList)):
                     # 확인 주문과 정정 주문의 번호가 일치한 경우
@@ -353,7 +361,7 @@ class MyBot(QMainWindow, form_class):
                             for itemIndex in range(len(self.myModel.outstandingBalanceList)):
                                 # 확인 주문과 정정 주문의 번호가 일치한 경우
                                 if self.myModel.outstandingBalanceList[itemIndex].orderNumber == orderNumber:
-                                    del self.myModeloutstandingBalanceList[itemIndex]
+                                    del self.myModel.outstandingBalanceList[itemIndex]
                                     break
                             for rowIndex in range(self.outstandingTableWidget.rowCount()):
                                 # 화면에 들어간 주문 번호와 일치한 경우
@@ -369,10 +377,11 @@ class MyBot(QMainWindow, form_class):
                 outStandingVolume = self.kiwoom.dynamicCall("GetChejanData(int)", 902).strip(" ")  # 미체결수량
                 tradeGubun = self.kiwoom.dynamicCall("GetChejanData(int)", 905).strip(" ").strip("+").strip("-")  # 주문구분
                 orderTime = self.kiwoom.dynamicCall("GetChejanData(int)", 908).strip(" ")  # 주문/체결시간
-                currentPrice = self.kiwoom.dynamicCall("GetChejanData(int)", 10).strip(" ")  # 현재가
+                currentPrice = abs(int(self.kiwoom.dynamicCall("GetChejanData(int)", 10).strip(" ")))  # 현재가
 
                 print("outStandingVolume", outStandingVolume)
-                #
+
+                # 정정하는 부분
                 for rowIndex in range(self.outstandingTableWidget.rowCount()):
                     if self.outstandingTableWidget.item(rowIndex, 2).text() == orderNumber \
                             and self.outstandingTableWidget.item(rowIndex, 3).text() == orderVolume \
@@ -394,12 +403,8 @@ class MyBot(QMainWindow, form_class):
                                     break
                             break
 
-                    for itemIndex in range(len(self.myModel.outstandingBalanceList)):
-                        # 확인 주문과 정정 주문의 번호가 일치한 경우
-                        if self.myModel.outstandingBalanceList[itemIndex].orderNumber == orderNumber:
-
                 # 취소시 주문 삭제
-                if outStandingVolume == 0: # 미체결 건 0 일때
+                if outStandingVolume == 0:  # 미체결 건 0 일때
                     print("너 왜 안돼?")
                     # 원주문 삭제
                     for itemIndex in range(len(self.myModel.outstandingBalanceList)):
@@ -412,6 +417,7 @@ class MyBot(QMainWindow, form_class):
                         if self.outstandingTableWidget.item(rowIndex, 2).text() == orderNumber:
                             self.outstandingTableWidget.removeRow(rowIndex)
                             break
+                    return
 
                 # 데이터 추가
                 outStandingOrder = dm.DataModel.OutstandingBalance(itemCode, itemName, orderNumber, orderVolume,
@@ -434,10 +440,81 @@ class MyBot(QMainWindow, form_class):
                 self.outstandingTableWidget.setItem(index, 7, QTableWidgetItem(str(orderTime)))
                 self.outstandingTableWidget.setItem(index, 8, QTableWidgetItem(str(currentPrice)))
         # 잔고 처리
-        elif sGubun == 1:  # 국내주식 잔고변경
-            pass
-        elif sGubun == 4:  # 파생잔고변경
-            pass
+        if sGubun == "1":  # 국내주식 잔고변경
+            print("국내주식 잔고변경")
+
+            itemCode = self.kiwoom.dynamicCall("GetChejanData(int)", 9001).strip(" ").strip("A")  # 종목코드
+            itemName = self.kiwoom.dynamicCall("GetChejanData(int)", 302).strip(" ")  # 종목명
+            amount = self.kiwoom.dynamicCall("GetChejanData(int)", 930).strip(" ")  # 보유수량
+            buyingPrice = self.kiwoom.dynamicCall("GetChejanData(int)", 931).strip(" ")  # 매입단가 
+            currentPrice = abs(int(self.kiwoom.dynamicCall("GetChejanData(int)", 10).strip(" ")))  # 현재가
+            estimateProfit = (currentPrice - int(buyingPrice)) * int(amount)  # 손이익
+
+            if buyingPrice != "0":
+                profitRate = estimateProfit / (int(buyingPrice) * int(amount))
+            else:
+                profitRate = 0
+
+            check = 0  # 잔고 유무 체크용
+            for item in self.myModel.stockBalanceList:
+                if item.itemName.strip(" ") == itemName.strip(" "):  # 이름이 일치하면
+                    check = 1
+                    if amount == "0":
+                        for rowIndex in range(self.outstandingTableWidget.rowCount()):
+                            if self.stockListTableWidget.item(rowIndex, 0).text() == itemCode:
+                                self.stockListTableWidget.removeRow(rowIndex)
+                                break
+                        self.myModel.stockBalanceList.remove(item)
+                        break
+
+                    # 데이터 update
+                    item.amount = amount
+                    item.buyingPrice = buyingPrice
+                    item.currentPrice = currentPrice
+                    item.estimateProfit = estimateProfit
+                    item.profitRate = profitRate
+
+                    # 테이블 update
+                    for rowIndex in range(len(self.myModel.stockBalanceList)):
+                        if self.stockListTableWidget.item(rowIndex, 0).text().strip(" ") == itemCode:
+                            self.stockListTableWidget.setItem(rowIndex, 0, QTableWidgetItem(str(itemCode)))
+                            self.stockListTableWidget.setItem(rowIndex, 1, QTableWidgetItem(str(itemName)))
+                            self.stockListTableWidget.setItem(rowIndex, 2, QTableWidgetItem(str(amount)))
+                            self.stockListTableWidget.setItem(rowIndex, 3, QTableWidgetItem(str(buyingPrice)))
+                            self.stockListTableWidget.setItem(rowIndex, 4, QTableWidgetItem(str(currentPrice)))
+                            self.stockListTableWidget.setItem(rowIndex, 5, QTableWidgetItem(str(estimateProfit)))
+                            self.stockListTableWidget.setItem(rowIndex, 6, QTableWidgetItem(f"{profitRate:.2%}"))
+                            break
+
+            if check == 0:  # 동일한 잔고가 없을 때
+                if amount == "0":
+                    for rowIndex in range(self.stockListTableWidget.rowCount()):
+                        if self.stockListTableWidget.item(rowIndex, 0).text().strip(" ") == itemCode:
+                            self.stockListTableWidget.removeRow(rowIndex)
+                            break
+
+                    for item in self.myModel.stockBalanceList:
+                        if item.itemCode.strip(" ") == itemName.strip(" "):
+                            self.myModel.stockBalanceList.remove(item)
+                            break
+                    return
+
+            stockBalance = dm.DataModel.StockBalance(itemCode, itemName, amount, buyingPrice, currentPrice, estimateProfit, profitRate)
+            self.myModel.stockBalanceList.append(stockBalance)
+
+            self.stockListTableWidget.setRowCount(self.stockListTableWidget.rowCount() + 1)
+            index = self.stockListTableWidget.rowCount() - 1
+
+            self.stockListTableWidget.setItem(index, 0, QTableWidgetItem(str(itemCode)))
+            self.stockListTableWidget.setItem(index, 1, QTableWidgetItem(str(itemName)))
+            self.stockListTableWidget.setItem(index, 2, QTableWidgetItem(str(amount)))
+            self.stockListTableWidget.setItem(index, 3, QTableWidgetItem(str(buyingPrice)))
+            self.stockListTableWidget.setItem(index, 4, QTableWidgetItem(str(currentPrice)))
+            self.stockListTableWidget.setItem(index, 5, QTableWidgetItem(str(estimateProfit)))
+            self.stockListTableWidget.setItem(index, 6, QTableWidgetItem(f"{profitRate:.2%}"))
+
+        if sGubun == "4":  # 파생잔고변경
+            print("파생잔고변경")
 
     def itemBuy(self):
         # 매수 함수
@@ -581,10 +658,12 @@ class MyBot(QMainWindow, form_class):
             orderType = 4  # SendOrder 함수 nOrderType - 4 : 매도취소
         orderNo = self.ordernumberTextEdit.toPlainText().strip(" ")  # 원주문번호
 
-        print("acc", acc, "code", code, "amount", amount, "price", price, "hogaGb", hogaGb, "orderType", orderType, "orderNo", orderNo)
+        print("acc", acc, "code", code, "amount", amount, "price", price, "hogaGb", hogaGb, "orderType", orderType,
+              "orderNo", orderNo)
 
         self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString",
                                 ["주식주문", "6800", acc, orderType, code, amount, price, hogaGb, orderNo])
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
