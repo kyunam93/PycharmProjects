@@ -287,7 +287,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -332,6 +332,9 @@
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_8">
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
        <property name="text">
         <string>총매입금액</string>
        </property>
@@ -397,7 +400,7 @@
       <height>261</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="chartlayout"/>
+    <layout class="QVBoxLayout" name="chartLayout"/>
    </widget>
    <widget class="QTextEdit" name="candlenumberTextEdit">
     <property name="geometry">
