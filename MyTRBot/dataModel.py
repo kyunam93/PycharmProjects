@@ -4,6 +4,7 @@ class DataModel:
         self.stockBalanceList = []
         self.outstandingBalanceList = []
         self.autoTradeConditionList = []
+        self.conditionItemList = []
         self.conditionItemList = {}
         # self.conditionItemList["조건명"] = [종목정보]
 
@@ -46,16 +47,15 @@ class DataModel:
 
     class ConditionItemInfo:
 
-        def __init__(self, itemCode, itemName, currentPrice, fluctuationRate, priceDiffYes, openPrice, highPrice, lowPrice, buyStatus, sellStatus, sRQName):
+        def __init__(self, itemCode, itemName, currentPrice, fluctuationRate, priceDiffYes, volume, openPrice, highPrice, lowPrice, sRQName):
             # 전일가 대비 차이, sRQName : 화면이름- 가장 주요
             self.itemCode = itemCode
             self.itemName = itemName
             self.currentPrice = currentPrice
             self.fluctuationRate = fluctuationRate
             self.priceDiffYes = priceDiffYes
+            self.volume = volume
             self.openPrice = openPrice
             self.highPrice = highPrice
             self.lowPrice = lowPrice
-            self.buyStatus = buyStatus
-            self.sellStatus = sellStatus
             self.sRQName = sRQName
