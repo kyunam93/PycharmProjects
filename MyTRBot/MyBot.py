@@ -914,399 +914,484 @@ class MyBot(QMainWindow, form_class):
         elif strType == "D":
             print("종목이탈 - ", strConditionName)
 
-    def conditionTableModify(self, itemCode, e):
-
+    def conditionTableModify(self, itemCode):
+        print("conditionTableModify")
         # 조건식 종목 테이블 업데이트 작업
+
         # 1. 조건식 테이블에 데이터가 없는 경우
         # - head 생성 하고 테이블 작성
+        if self.conditionItemTableWidget.rowCount == 0 or self.conditionItemTableWidget is None:
+            column_head = ["종목번호", "종목명", "현재가", "등락률", "전일대비", "거래량", "시가", "고가", "저가", "조건식명"]
+            colCount = len(column_head)
+            self.conditionItemTableWidget.setColumnCount(colCount)
+            self.conditionItemTableWidget.setRowCount(1)
+            self.conditionItemTableWidget.setHorizontalHeaderLabels(column_head)  # 헤더 삽입
+            self.conditionItemTableWidget.setEditTriggers(
+                QAbstractItemView.NoEditTriggers)  # 수정 방지
+            index = self.conditionItemTableWidget.rowCount() - 1
+
+            check = 0
+            for condition in self.myModel.conditionItemList:
+                for item in self.myModel.conditionItemList[condition]:
+                    if item.itemCode.strip(" ") == code.strip(" "):
+                        check = 1
+                        self.conditionItemTableWidget.setItem(index, 0, QTableWidgetItem(str(item.itemCode)))
+                        self.conditionItemTableWidget.setItem(index, 1, QTableWidgetItem(str(item.itemName)))
+                        self.conditionItemTableWidget.setItem(index, 2, QTableWidgetItem(str(item.currentPrice)))
+                        self.conditionItemTableWidget.setItem(index, 3, QTableWidgetItem(str(item.fluctuationRate)))
+                        self.conditionItemTableWidget.setItem(index, 4, QTableWidgetItem(str(item.priceDiffYes)))
+                        self.conditionItemTableWidget.setItem(index, 5, QTableWidgetItem(str(item.volume)))
+                        self.conditionItemTableWidget.setItem(index, 6, QTableWidgetItem(str(item.openPrice)))
+                        self.conditionItemTableWidget.setItem(index, 7, QTableWidgetItem(str(item.highPrice)))
+                        self.conditionItemTableWidget.setItem(index, 8, QTableWidgetItem(str(item.lowPrice)))
+                        self.conditionItemTableWidget.setItem(index, 9, QTableWidgetItem(str(item.sRQName)))
+                        break
+
+                if check == 1:
+                    break
         # 2. 기존의 종목이 있는 경우
         # - 기존 종목 데이터를 현재 데이터로 업데이트
-        # 3. 기존의 종목이 없는 경우
-        # - 테이블에 추가 작업
+        else:
+            check = 0  # 기존 종목의 유무 체크
+            check2 = 0
+            for itemIndex in range(self.conditionItemTableWidget.rowCount()):
+                if self.conditionItemTableWidget.item(itemIndex, 0).strip(" ") == code.strip(" "):
+                    cehck = 1
+                    for condition in self.myModel.conditionItemList:
+                        for item in self.myModel.conditionItemList[condition]:
+                            if item.itemCode.strip(" ") == code.strip(" "):
+                                check2 = 1
+                                self.conditionItemTableWidget.setItem(index, 0, QTableWidgetItem(str(item.itemCode)))
+                                self.conditionItemTableWidget.setItem(index, 1, QTableWidgetItem(str(item.itemName)))
+                                self.conditionItemTableWidget.setItem(index, 2,
+                                                                      QTableWidgetItem(str(item.currentPrice)))
+                                self.conditionItemTableWidget.setItem(index, 3,
+                                                                      QTableWidgetItem(str(item.fluctuationRate)))
+                                self.conditionItemTableWidget.setItem(index, 4,
+                                                                      QTableWidgetItem(str(item.priceDiffYes)))
+                                self.conditionItemTableWidget.setItem(index, 5, QTableWidgetItem(str(item.volume)))
+                                self.conditionItemTableWidget.setItem(index, 6, QTableWidgetItem(str(item.openPrice)))
+                                self.conditionItemTableWidget.setItem(index, 7, QTableWidgetItem(str(item.highPrice)))
+                                self.conditionItemTableWidget.setItem(index, 8, QTableWidgetItem(str(item.lowPrice)))
+                                self.conditionItemTableWidget.setItem(index, 9, QTableWidgetItem(str(item.sRQName)))
+                                break
+                        if check2 == 1:
+                            break
+                break
+            # 3. 기존의 종목이 없는 경우
+            # - 테이블에 추가 작업
+            if check == 0:
+                self.conditionItemTableWidget.setRowCount(self.conditionItemTableWidget.rowCount() + 1)
+                index = self.conditionItemTableWidget.rowCount() - 1
+                check3 = 0
+                for condition in self.myModel.conditionItemList:
+                    for item in self.myModel.conditionItemList[condition]:
+                        if item.itemCode.strip(" ") == code.strip(" "):
+                            check3 = 1
+                            self.conditionItemTableWidget.setItem(index, 0, QTableWidgetItem(item.itemCode))
+                            self.conditionItemTableWidget.setItem(index, 1, QTableWidgetItem(item.itemName))
+                            self.conditionItemTableWidget.setItem(index, 2, QTableWidgetItem(item.currentPrice))
+                            self.conditionItemTableWidget.setItem(index, 3, QTableWidgetItem(item.fluctuationRate))
+                            self.conditionItemTableWidget.setItem(index, 4, QTableWidgetItem(item.priceDiffYes))
+                            self.conditionItemTableWidget.setItem(index, 5, QTableWidgetItem(item.volume))
+                            self.conditionItemTableWidget.setItem(index, 6, QTableWidgetItem(item.openPrice))
+                            self.conditionItemTableWidget.setItem(index, 7, QTableWidgetItem(item.highPrice))
+                            self.conditionItemTableWidget.setItem(index, 8, QTableWidgetItem(item.lowPrice))
+                            self.conditionItemTableWidget.setItem(index, 9, QTableWidgetItem(item.sRQName))
+                            break
+
+                    if check3 == 1:
+                        break
+
+
+        # def conditionTableModify(self, itemCode, itemName, currentPrice, fluctuationRate, priceDiffYes, volume, openPrice,
+        #                          highPrice, lowPrice, sRQName):
+        #
+        #     # 조건식 종목 테이블 업데이트 작업
+        #     # 1. 조건식 테이블에 데이터가 없는 경우
+        #     # - head 생성 하고 테이블 작성
+        #     # 2. 기존의 종목이 있는 경우
+        #     # - 기존 종목 데이터를 현재 데이터로 업데이트
+        #     # 3. 기존의 종목이 없는 경우
+        #     # - 테이블에 추가 작업
+        #
+        #     rowIndex = self.conditionItemTableWidget.rowCount() + 1
+        #
+        #     # 테이블 위젯에 아이템 셋팅
+        #     self.conditionItemTableWidget.setItem(rowIndex, 0, QTableWidgetItem(itemCode))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 1, QTableWidgetItem(itemName))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 2, QTableWidgetItem(f"{currentPrice:,}"))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 3, QTableWidgetItem(fluctuationRate))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 4, QTableWidgetItem(priceDiffYes))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 5, QTableWidgetItem(volume))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 6, QTableWidgetItem(f"{openPrice:,}"))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 7, QTableWidgetItem(f"{highPrice:,}"))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 8, QTableWidgetItem(f"{lowPrice:,}"))
+        #     self.conditionItemTableWidget.setItem(rowIndex, 9, QTableWidgetItem(sRQName))
+
         pass
 
-    # def conditionTableModify(self, itemCode, itemName, currentPrice, fluctuationRate, priceDiffYes, volume, openPrice,
-    #                          highPrice, lowPrice, sRQName):
-    #
-    #     # 조건식 종목 테이블 업데이트 작업
-    #     # 1. 조건식 테이블에 데이터가 없는 경우
-    #     # - head 생성 하고 테이블 작성
-    #     # 2. 기존의 종목이 있는 경우
-    #     # - 기존 종목 데이터를 현재 데이터로 업데이트
-    #     # 3. 기존의 종목이 없는 경우
-    #     # - 테이블에 추가 작업
-    #
-    #     rowIndex = self.conditionItemTableWidget.rowCount() + 1
-    #
-    #     # 테이블 위젯에 아이템 셋팅
-    #     self.conditionItemTableWidget.setItem(rowIndex, 0, QTableWidgetItem(itemCode))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 1, QTableWidgetItem(itemName))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 2, QTableWidgetItem(f"{currentPrice:,}"))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 3, QTableWidgetItem(fluctuationRate))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 4, QTableWidgetItem(priceDiffYes))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 5, QTableWidgetItem(volume))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 6, QTableWidgetItem(f"{openPrice:,}"))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 7, QTableWidgetItem(f"{highPrice:,}"))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 8, QTableWidgetItem(f"{lowPrice:,}"))
-    #     self.conditionItemTableWidget.setItem(rowIndex, 9, QTableWidgetItem(sRQName))
+        def itemBuy(self):
+            # 매수 함수
+            print("매수 버튼(itemBuy)")
 
-    pass
+            acc = self.accComboBox.currentText()  # 계좌정보
+            code = self.itemCodeTextEdit.toPlainText()  # 종목코드
+            amount = int(self.volumeSpinBox.value())  # 수량
+            price = int(self.priceSpinBox.value())  # 가격
+            hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
+            if hogaGb == "03":  # 시장가 : 현재 거래되고 있는 가격
+                price = 0
 
-    def itemBuy(self):
-        # 매수 함수
-        print("매수 버튼(itemBuy)")
+            self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString",
+                                    ["주식주문", "6000", acc, 1, code, amount, price, hogaGb, ""])
 
-        acc = self.accComboBox.currentText()  # 계좌정보
-        code = self.itemCodeTextEdit.toPlainText()  # 종목코드
-        amount = int(self.volumeSpinBox.value())  # 수량
-        price = int(self.priceSpinBox.value())  # 가격
-        hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
-        if hogaGb == "03":  # 시장가 : 현재 거래되고 있는 가격
-            price = 0
+            print("계좌정보", acc, "종목코드", code, "수량", amount, "가격", price, "호가구분", hogaGb)
 
-        self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString",
-                                ["주식주문", "6000", acc, 1, code, amount, price, hogaGb, ""])
+        def itemSell(self):
+            # 매도 함수
+            print("매도 버튼(itemSell)")
 
-        print("계좌정보", acc, "종목코드", code, "수량", amount, "가격", price, "호가구분", hogaGb)
+            acc = self.accComboBox.currentText()  # 계좌정보
+            code = self.itemCodeTextEdit.toPlainText()  # 종목코드
+            amount = int(self.volumeSpinBox.value())  # 수량
+            price = int(self.priceSpinBox.value())  # 가격
+            hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
+            if hogaGb == "03":  # 시장가 : 현재 거래되고 있는 가격
+                price = 0
 
-    def itemSell(self):
-        # 매도 함수
-        print("매도 버튼(itemSell)")
+            self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString",
+                                    ["주식주문", "6500", acc, 2, code, amount, price, hogaGb, ""])
 
-        acc = self.accComboBox.currentText()  # 계좌정보
-        code = self.itemCodeTextEdit.toPlainText()  # 종목코드
-        amount = int(self.volumeSpinBox.value())  # 수량
-        price = int(self.priceSpinBox.value())  # 가격
-        hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
-        if hogaGb == "03":  # 시장가 : 현재 거래되고 있는 가격
-            price = 0
+        def getMyAccount(self):
+            print("getMyAccount")
 
-        self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString",
-                                ["주식주문", "6500", acc, 2, code, amount, price, hogaGb, ""])
+            # 계좌 잔고 호출
+            account = self.accComboBox.currentText()  # 계좌정보
+            code = self.itemCodeTextEdit.toPlainText()  # 종목코드
 
-    def getMyAccount(self):
-        print("getMyAccount")
+            print("계좌번호", account, "종목코드", code)
 
-        # 계좌 잔고 호출
-        account = self.accComboBox.currentText()  # 계좌정보
-        code = self.itemCodeTextEdit.toPlainText()  # 종목코드
+            # Tr -
+            # SetInputValue 입력 데이터 설정
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)  # 전문 조회할 보유계좌번호 10자리
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "비밀번호", "")  # 사용안함, 공백
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "비밀번호입력매체구분", "00")  # 공백불가
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "조회구분", "2")  # 1:합산, 2:개별
 
-        print("계좌번호", account, "종목코드", code)
+            # TR을 서버로 전송
+            self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0,
+                                    "5100")  # 0은 반복횟수
 
-        # Tr -
-        # SetInputValue 입력 데이터 설정
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)  # 전문 조회할 보유계좌번호 10자리
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "비밀번호", "")  # 사용안함, 공백
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "비밀번호입력매체구분", "00")  # 공백불가
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "조회구분", "2")  # 1:합산, 2:개별
+            # Tr -
+            # SetInputValue 입력 데이터 설정
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)  # 전문 조회할 보유계좌번호 10자리
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "전체종목구분 ", "0")  # 전체종목구분 = 0:전체, 1:종목
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "매매구분", "0")  # 매매구분 = 0:전체, 1:매도, 2:매수
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드",
+                                    "")  # 종목코드 = 전문 조회할 종목코드 (공백허용, 공백입력시 전체종목구분 "0" 입력하여 전체 종목 대상으로 조회)
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "체결구분", "1")  # 체결구분 = 0:전체, 2:체결, 1:미체결
 
-        # TR을 서버로 전송
-        self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "계좌평가잔고내역요청", "opw00018", 0,
-                                "5100")  # 0은 반복횟수
+            # CommRqData TR을 서버로 전송
+            self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "미체결요청", "opt10075", 0,
+                                    "5200")  # 0은 반복횟수
 
-        # Tr -
-        # SetInputValue 입력 데이터 설정
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "계좌번호", account)  # 전문 조회할 보유계좌번호 10자리
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "전체종목구분 ", "0")  # 전체종목구분 = 0:전체, 1:종목
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "매매구분", "0")  # 매매구분 = 0:전체, 1:매도, 2:매수
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드",
-                                "")  # 종목코드 = 전문 조회할 종목코드 (공백허용, 공백입력시 전체종목구분 "0" 입력하여 전체 종목 대상으로 조회)
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "체결구분", "1")  # 체결구분 = 0:전체, 2:체결, 1:미체결
-
-        # CommRqData TR을 서버로 전송
-        self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "미체결요청", "opt10075", 0, "5200")  # 0은 반복횟수
-
-    def selectOutstandingOrder(self):
-        print("미체결 선택 함수")
-        # 미체결 선택 함수
-        check = 0
-        for rowIndex in range(self.outstandingTableWidget.rowCount()):
-            for colIndex in range(self.outstandingTableWidget.columnCount()):
-                # 아이템이 있는 경우
-                if self.outstandingTableWidget.item(rowIndex, colIndex) is not None:
-                    # 아이템이 선택된 경우
-                    if self.outstandingTableWidget.item(rowIndex, colIndex).isSelected():
-                        check = 1
-                        self.searchItemTextEdit.setText(self.outstandingTableWidget.item(rowIndex, 1).text())  # 종목명
-                        self.itemCodeTextEdit.setText(self.outstandingTableWidget.item(rowIndex, 0).text())  # 종목코드
-                        self.volumeSpinBox.setValue(int(self.outstandingTableWidget.item(rowIndex, 5).text()))  # 수량
-                        self.priceSpinBox.setValue(int(self.outstandingTableWidget.item(rowIndex, 4).text()))  # 가격
-                        self.ordernumberTextEdit.setText(self.outstandingTableWidget.item(rowIndex, 2).text())  # 원주문번호
-                        index = self.tradeGubunComboBox.findText(self.outstandingTableWidget.item(rowIndex, 6).text())
-                        self.tradeGubunComboBox.setCurrentIndex(index)  # 거래구분
-                        self.drawDayChart(self.outstandingTableWidget.item(rowIndex, 0).text())
-            if check == 1:
-                break
-
-    def selectStockListOrder(self):
-        # 계좌잔고 선택 함수
-        print("계좌잔고 선택 함수")
-        check = 0
-        for rowIndex in range(self.stockListTableWidget.rowCount()):
-            for colIndex in range(self.stockListTableWidget.columnCount()):
-                if self.stockListTableWidget.item(rowIndex, colIndex) is not None:
-                    if self.stockListTableWidget.item(rowIndex, colIndex).isSelected():
-                        check = 1
-                        self.searchItemTextEdit.setText(self.stockListTableWidget.item(rowIndex, 1).text())  # 종목명
-                        self.itemCodeTextEdit.setText(self.stockListTableWidget.item(rowIndex, 0).text())  # 종목코드
-                        self.volumeSpinBox.setValue(int(self.stockListTableWidget.item(rowIndex, 2).text()))  # 수량
-                        self.priceSpinBox.setValue(int(self.stockListTableWidget.item(rowIndex, 3).text()))  # 가격
-                        self.ordernumberTextEdit.setText("")  # 원주문번호
-                        index = self.tradeGubunComboBox.findText("")
-                        self.tradeGubunComboBox.setCurrentIndex(index)  # 거래구분
-                        self.drawDayChart(self.stockListTableWidget.item(rowIndex, 0).text())
-                        break
-
-            if check == 1:
-                break
-
-    def selectConditionItemListOrder(self):
-        # 계좌잔고 선택 함수
-        print("조건검색목록 선택 함수")
-        check = 0
-        for rowIndex in range(self.conditionItemTableWidget.rowCount()):
-            for colIndex in range(self.conditionItemTableWidget.columnCount()):
-                if self.conditionItemTableWidget.item(rowIndex, colIndex) is not None:
-                    if self.conditionItemTableWidget.item(rowIndex, colIndex).isSelected():
-                        check = 1
-                        self.searchItemTextEdit.setText(self.conditionItemTableWidget.item(rowIndex, 1).text())  # 종목명
-                        self.itemCodeTextEdit.setText(self.conditionItemTableWidget.item(rowIndex, 0).text())  # 종목코드
-                        self.volumeSpinBox.setValue(0)  # 수량
-                        self.priceSpinBox.setValue(0)  # 가격
-                        self.ordernumberTextEdit.setText("")  # 원주문번호
-                        index = self.tradeGubunComboBox.findText("")
-                        self.tradeGubunComboBox.setCurrentIndex(index)  # 거래구분
-                        self.drawDayChart(self.conditionItemTableWidget.item(rowIndex, 0).text())
-                        break
-
-            if check == 1:
-                break
-
-    def itemCorrect(self):
-        # 정정
-        print("item Correct")
-
-        acc = self.accComboBox.currentText().strip(" ")  # 계좌번호
-        code = self.itemCodeTextEdit.toPlainText().strip(" ")  # 종목코드
-        amount = int(self.volumeSpinBox.value())  # 수량
-        price = int(self.priceSpinBox.value())  # 가격
-        hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
-        orderType = self.tradeGubunComboBox.currentText().strip(" ")  # 거래구분
-        if orderType == "매수" or orderType == "매수정정":
-            orderType = 5  # SendOrder 함수 nOrderType - 5 : 매수 정정
-        elif orderType == "매도" or orderType == "매도정정":
-            orderType = 6  # SendOrder 함수 nOrderType - 6 : 매도 정정
-        orderNo = self.ordernumberTextEdit.toPlainText().strip(" ")  # 원주문번호
-
-        self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString",
-                                ["주식주문", "6700", acc, orderType, code, amount, price, hogaGb, orderNo])
-
-    def itemCancel(self):
-        # 취소
-        print("item Cancel")
-
-        acc = self.accComboBox.currentText().strip(" ")  # 계좌번호
-        code = self.itemCodeTextEdit.toPlainText().strip(" ")  # 종목코드
-        amount = int(self.volumeSpinBox.value())  # 수량
-        price = int(self.priceSpinBox.value())  # 가격
-        hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
-        orderType = self.tradeGubunComboBox.currentText().strip(" ")  # 거래구분
-        if orderType == "매수" or orderType == "매수취소" or orderType == "매수정정":
-            orderType = 3  # SendOrder 함수 nOrderType - 3 : 매수취소
-        elif orderType == "매도" or orderType == "매도취소" or orderType == "매도정정":
-            orderType = 4  # SendOrder 함수 nOrderType - 4 : 매도취소
-        orderNo = self.ordernumberTextEdit.toPlainText().strip(" ")  # 원주문번호
-
-        print("계좌번호", acc, "종목코드", code, "수량", amount, "가격", price, "호가구분", hogaGb, "거래구분", orderType,
-              "원주문번호", orderNo)
-
-        self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString)",
-                                ["주식주문", "6800", acc, orderType, code, amount, price, hogaGb, orderNo])
-
-    def drawDayChart(self, itemCode):
-        # 일차트 그리기
-        print("일봉차트 그리기")
-        now = datetime.datetime.now()  # 현재 날자 가져옴
-        nowDate = now.strftime("%Y%m%d")  # YYYYMMDD 포멧
-
-        # opt10081 데이터 요청
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", itemCode)
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "기준일자", nowDate)
-        # 수정주가구분 = 0 or 1, 수신데이터 1:유상증자, 2:무상증자, 4:배당락, 8:액면분할, 16:액면병합, 32:기업합병, 64:감자, 256:권리락
-        self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
-
-        self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회요청", "opt10081", 0, "5300")
-
-    def chartShow(self):
-        if self.itemCodeTextEdit.toPlainText() is not None and self.itemCodeTextEdit.toPlainText != "":
-            code = self.itemCodeTextEdit.toPlainText().strip(" ")
-            self.drawDayChart(code)
-
-    def getConditionList(self):
-        print("조건검색")
-
-        if self.kiwoom.dynamicCall("getConditionLoad()") == 1:
-            print("조건식 목록 호출 성공")
-            # 조건검색 목록을 모두 수신하면 OnReceiveConditionVer()이벤트가 발생
-        else:
-            print("조건식 목록 호출 실패")
-            return
-
-    def addAutoTradeCondition(self):
-        print("조건식 추가 함수")
-
-        check = 0
-        for rowIndex in range(self.conditionTableWidget.rowCount()):
-            for colIndex in range(self.conditionTableWidget.columnCount()):
-                if self.conditionTableWidget.item(rowIndex, colIndex).isSelected():
-                    check = 1
-                    code = self.conditionTableWidget.item(rowIndex, 0).text()
-                    name = self.conditionTableWidget.item(rowIndex, 1).text()
-                    break
-
-            if check == 1:
-                break
-
-        startTime = self.startTimeEdit.time()
-        endTime = self.endTimeEdit.time()
-        autoTradeGubun = self.autoTradeGubunComboBox.currentText()
-        if check == 1:
-            autoTradeCondition = dm.DataModel.AutoTradeConditionInfo(startTime, endTime, code, name, autoTradeGubun)
-            self.myModel.autoTradeConditionList.append(autoTradeCondition)
-            self.updateAutoTradeConditionTable()
-
-    def removeAutoTradeCondition(self):
-        print("조건식 제거 함수")
-        check = 0
-        for rowIndex in range(self.autoTradeConditionTableWidget.rowCount()):
-            for colIndex in range(self.autoTradeConditionTableWidget.columnCount()):
-                if self.autoTradeConditionTableWidget.item(rowIndex, colIndex).isSelected():
-                    check = 1
-                    del self.myModel.autoTradeConditionList[rowIndex]
-                    break
+        def selectOutstandingOrder(self):
+            print("미체결 선택 함수")
+            # 미체결 선택 함수
+            check = 0
+            for rowIndex in range(self.outstandingTableWidget.rowCount()):
+                for colIndex in range(self.outstandingTableWidget.columnCount()):
+                    # 아이템이 있는 경우
+                    if self.outstandingTableWidget.item(rowIndex, colIndex) is not None:
+                        # 아이템이 선택된 경우
+                        if self.outstandingTableWidget.item(rowIndex, colIndex).isSelected():
+                            check = 1
+                            self.searchItemTextEdit.setText(self.outstandingTableWidget.item(rowIndex, 1).text())  # 종목명
+                            self.itemCodeTextEdit.setText(self.outstandingTableWidget.item(rowIndex, 0).text())  # 종목코드
+                            self.volumeSpinBox.setValue(int(self.outstandingTableWidget.item(rowIndex, 5).text()))  # 수량
+                            self.priceSpinBox.setValue(int(self.outstandingTableWidget.item(rowIndex, 4).text()))  # 가격
+                            self.ordernumberTextEdit.setText(
+                                self.outstandingTableWidget.item(rowIndex, 2).text())  # 원주문번호
+                            index = self.tradeGubunComboBox.findText(
+                                self.outstandingTableWidget.item(rowIndex, 6).text())
+                            self.tradeGubunComboBox.setCurrentIndex(index)  # 거래구분
+                            self.drawDayChart(self.outstandingTableWidget.item(rowIndex, 0).text())
                 if check == 1:
                     break
 
-        self.updateAutoTradeConditionTable()
-
-        '''
-                    code = self.autoTradeConditionTableWidget.item(rowIndex, 2).text()
-                    # 데이터 삭제
-                    for itemIndex in range(len(self.myModel.autoTradeConditionList)):
-                        # 리스트와 선택한 화면의 코드번호가 일치한 경우
-                        if self.myModel.autoTradeConditionList[itemIndex].code == code:
-                            del self.myModel.autoTradeConditionList[itemIndex]
+        def selectStockListOrder(self):
+            # 계좌잔고 선택 함수
+            print("계좌잔고 선택 함수")
+            check = 0
+            for rowIndex in range(self.stockListTableWidget.rowCount()):
+                for colIndex in range(self.stockListTableWidget.columnCount()):
+                    if self.stockListTableWidget.item(rowIndex, colIndex) is not None:
+                        if self.stockListTableWidget.item(rowIndex, colIndex).isSelected():
+                            check = 1
+                            self.searchItemTextEdit.setText(self.stockListTableWidget.item(rowIndex, 1).text())  # 종목명
+                            self.itemCodeTextEdit.setText(self.stockListTableWidget.item(rowIndex, 0).text())  # 종목코드
+                            self.volumeSpinBox.setValue(int(self.stockListTableWidget.item(rowIndex, 2).text()))  # 수량
+                            self.priceSpinBox.setValue(int(self.stockListTableWidget.item(rowIndex, 3).text()))  # 가격
+                            self.ordernumberTextEdit.setText("")  # 원주문번호
+                            index = self.tradeGubunComboBox.findText("")
+                            self.tradeGubunComboBox.setCurrentIndex(index)  # 거래구분
+                            self.drawDayChart(self.stockListTableWidget.item(rowIndex, 0).text())
                             break
-                    for rowIndex in range(self.autoTradeConditionTableWidget.rowCount()):
-                        # 화면에 들어간 코드번호와 일치한 경우
-                        if self.autoTradeConditionTableWidget.item(rowIndex, 2).text() == code:
-                            self.autoTradeConditionTableWidget.removeRow(rowIndex)
+
+                if check == 1:
+                    break
+
+        def selectConditionItemListOrder(self):
+            # 계좌잔고 선택 함수
+            print("조건검색목록 선택 함수")
+            check = 0
+            for rowIndex in range(self.conditionItemTableWidget.rowCount()):
+                for colIndex in range(self.conditionItemTableWidget.columnCount()):
+                    if self.conditionItemTableWidget.item(rowIndex, colIndex) is not None:
+                        if self.conditionItemTableWidget.item(rowIndex, colIndex).isSelected():
+                            check = 1
+                            self.searchItemTextEdit.setText(
+                                self.conditionItemTableWidget.item(rowIndex, 1).text())  # 종목명
+                            self.itemCodeTextEdit.setText(
+                                self.conditionItemTableWidget.item(rowIndex, 0).text())  # 종목코드
+                            self.volumeSpinBox.setValue(0)  # 수량
+                            self.priceSpinBox.setValue(0)  # 가격
+                            self.ordernumberTextEdit.setText("")  # 원주문번호
+                            index = self.tradeGubunComboBox.findText("")
+                            self.tradeGubunComboBox.setCurrentIndex(index)  # 거래구분
+                            self.drawDayChart(self.conditionItemTableWidget.item(rowIndex, 0).text())
                             break
-                break
-            if check == 1:
-                break
-        '''
 
-    def updateAutoTradeConditionTable(self):
-        column_head = ["시작시간", "종료시간", "조건식번호", "조건식이름", "자동매매상태"]
-        colCount = len(column_head)
-        rowCount = len(self.myModel.autoTradeConditionList)
-        self.autoTradeConditionTableWidget.setColumnCount(colCount)  # 열
-        self.autoTradeConditionTableWidget.setRowCount(rowCount)  # 행
-        self.autoTradeConditionTableWidget.setHorizontalHeaderLabels(column_head)  # 헤더 삽입
-        self.autoTradeConditionTableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 수정 방지
+                if check == 1:
+                    break
 
-        for index in range(rowCount):
-            self.autoTradeConditionTableWidget.setItem(index, 0,
-                                                       QTableWidgetItem(str(self.myModel.autoTradeConditionList[
-                                                                                index].startTime.toString())))
-            self.autoTradeConditionTableWidget.setItem(index, 1,
-                                                       QTableWidgetItem(str(self.myModel.autoTradeConditionList[
-                                                                                index].endTime.toString())))
-            self.autoTradeConditionTableWidget.setItem(index, 2,
-                                                       QTableWidgetItem(
-                                                           str(self.myModel.autoTradeConditionList[index].code)))
-            self.autoTradeConditionTableWidget.setItem(index, 3,
-                                                       QTableWidgetItem(
-                                                           str(self.myModel.autoTradeConditionList[index].name)))
-            self.autoTradeConditionTableWidget.setItem(index, 4,
-                                                       QTableWidgetItem(str(
-                                                           self.myModel.autoTradeConditionList[index].autoTradeGubun)))
+        def itemCorrect(self):
+            # 정정
+            print("item Correct")
 
-    def conditionSearch(self):
-        print("조건검색시작 버튼 함수")
+            acc = self.accComboBox.currentText().strip(" ")  # 계좌번호
+            code = self.itemCodeTextEdit.toPlainText().strip(" ")  # 종목코드
+            amount = int(self.volumeSpinBox.value())  # 수량
+            price = int(self.priceSpinBox.value())  # 가격
+            hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
+            orderType = self.tradeGubunComboBox.currentText().strip(" ")  # 거래구분
+            if orderType == "매수" or orderType == "매수정정":
+                orderType = 5  # SendOrder 함수 nOrderType - 5 : 매수 정정
+            elif orderType == "매도" or orderType == "매도정정":
+                orderType = 6  # SendOrder 함수 nOrderType - 6 : 매도 정정
+            orderNo = self.ordernumberTextEdit.toPlainText().strip(" ")  # 원주문번호
 
-        # text = self.conditionSearchPushBox.text()
-        # print(text)
-        # if text == "조건검색시작":
-        #     self.conditionSearchPushBox.setText("중      지")
-        # elif text == "중      지":
-        #     self.conditionSearchPushBox.setText("조건검색시작")
+            self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString",
+                                    ["주식주문", "6700", acc, orderType, code, amount, price, hogaGb, orderNo])
 
-        if self.boolCondition == 0:
-            self.conditionSearchPushBox.setText("조건검색종료")
-            self.boolCondition = 1
-        else:
-            # 시작 상태 체크 후 (종료 -> 시작)
-            self.conditionSearchPushBox.setText("조건검색시작")
-            self.boolCondition = 0
+        def itemCancel(self):
+            # 취소
+            print("item Cancel")
 
-        # 조건식 검색 테이블을 통해 조건번호, 조건이름 호출
-        # row 마다 SendConditionStop() 호출
-        for rowIndex in range(self.autoTradeConditionTableWidget.rowCount()):
+            acc = self.accComboBox.currentText().strip(" ")  # 계좌번호
+            code = self.itemCodeTextEdit.toPlainText().strip(" ")  # 종목코드
+            amount = int(self.volumeSpinBox.value())  # 수량
+            price = int(self.priceSpinBox.value())  # 가격
+            hogaGb = self.gubunComboBox.currentText()[0:2]  # 호가구분
+            orderType = self.tradeGubunComboBox.currentText().strip(" ")  # 거래구분
+            if orderType == "매수" or orderType == "매수취소" or orderType == "매수정정":
+                orderType = 3  # SendOrder 함수 nOrderType - 3 : 매수취소
+            elif orderType == "매도" or orderType == "매도취소" or orderType == "매도정정":
+                orderType = 4  # SendOrder 함수 nOrderType - 4 : 매도취소
+            orderNo = self.ordernumberTextEdit.toPlainText().strip(" ")  # 원주문번호
 
-            code = self.autoTradeConditionTableWidget.item(rowIndex, 2).text()
-            name = self.autoTradeConditionTableWidget.item(rowIndex, 3).text()
+            print("계좌번호", acc, "종목코드", code, "수량", amount, "가격", price, "호가구분", hogaGb, "거래구분", orderType,
+                  "원주문번호", orderNo)
 
-            # 조건 검색 시작시
-            # self.boolCondition 여부에 따라 처리 방안이 다름
-            if self.boolCondition == 1:
-                # row마다 lRet =  SendCondition() 함수 호출 -> OnReceiveTrCondition() 이벤트 발생
-                # -> CommKwRqData() 함수를 통해 관심종목데이터(OPTKWFID)tr
-                # BSTR  strScrNo : 화면번호, BSTR strConditionName : 조건식 이름 , int nIndex 조건식 고유번호,
-                # int nSearch   // 실시간옵션. 0:조건검색만, 1:조건검색+실시간 조건검색
-                strScrNo = 7000 + (rowIndex * 100)
-                lRet = self.kiwoom.dynamicCall("SendCondition(QString, QString, int, int)", str(strScrNo), name, code,
-                                               0)
-                # 화면번호 기준으로 종목 (7000 + rowIndex * 100)
-                if lRet == 1:
-                    print("조건검색정보요청 성공 - ", name)
-                    # 아래와 같이 딕셔너리 형태로 만드는 이유?
-                    # 데이터가 많기 때문에 키 밸류 형태로 저장
-                    self.myModel.conditionItemList[name] = []
-                else:
-                    print("조건검색정보요청 실패 - ", name)
+            self.kiwoom.dynamicCall("SendOrder(QString, QString, QString, int, QString, int, int, QString, QString)",
+                                    ["주식주문", "6800", acc, orderType, code, amount, price, hogaGb, orderNo])
 
+        def drawDayChart(self, itemCode):
+            # 일차트 그리기
+            print("일봉차트 그리기")
+            now = datetime.datetime.now()  # 현재 날자 가져옴
+            nowDate = now.strftime("%Y%m%d")  # YYYYMMDD 포멧
+
+            # opt10081 데이터 요청
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", itemCode)
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "기준일자", nowDate)
+            # 수정주가구분 = 0 or 1, 수신데이터 1:유상증자, 2:무상증자, 4:배당락, 8:액면분할, 16:액면병합, 32:기업합병, 64:감자, 256:권리락
+            self.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+
+            self.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회요청", "opt10081", 0, "5300")
+
+        def chartShow(self):
+            if self.itemCodeTextEdit.toPlainText() is not None and self.itemCodeTextEdit.toPlainText != "":
+                code = self.itemCodeTextEdit.toPlainText().strip(" ")
+                self.drawDayChart(code)
+
+        def getConditionList(self):
+            print("조건검색")
+
+            if self.kiwoom.dynamicCall("getConditionLoad()") == 1:
+                print("조건식 목록 호출 성공")
+                # 조건검색 목록을 모두 수신하면 OnReceiveConditionVer()이벤트가 발생
             else:
-                # BSTR  strScrNo : 화면번호, BSTR strConditionName : 조건식 이름 , int nIndex 조건식 고유번호
+                print("조건식 목록 호출 실패")
+                return
 
-                strScrNo = 7000 + (rowIndex * 100)
-                self.kiwoom.dynamicCall("SendConditionStop(QString, QString, int)", strScrNo, name, code)
-                # 화면번호 기준으로 종목 (7000 + rowIndex * 100)
-                # row 마다 SendConditionStop() 호출
+        def addAutoTradeCondition(self):
+            print("조건식 추가 함수")
 
-            time.sleep(0.5)  # 1초에 5번 이상 호출되면 안되기 때문에 슬립을 준다.
+            check = 0
+            for rowIndex in range(self.conditionTableWidget.rowCount()):
+                for colIndex in range(self.conditionTableWidget.columnCount()):
+                    if self.conditionTableWidget.item(rowIndex, colIndex).isSelected():
+                        check = 1
+                        code = self.conditionTableWidget.item(rowIndex, 0).text()
+                        name = self.conditionTableWidget.item(rowIndex, 1).text()
+                        break
 
-    def autoTrade(self):
-        print("자동매매시작 버튼 함수")
+                if check == 1:
+                    break
 
-        # text = self.autoTradePushBox.text()
-        # print(text)
-        # if text == "자동매매시작":
-        #     self.autoTradePushBox.setText("중      지")
-        # elif text == "중      지":
-        #     self.autoTradePushBox.setText("자동매매시작")
+            startTime = self.startTimeEdit.time()
+            endTime = self.endTimeEdit.time()
+            autoTradeGubun = self.autoTradeGubunComboBox.currentText()
+            if check == 1:
+                autoTradeCondition = dm.DataModel.AutoTradeConditionInfo(startTime, endTime, code, name, autoTradeGubun)
+                self.myModel.autoTradeConditionList.append(autoTradeCondition)
+                self.updateAutoTradeConditionTable()
 
-        if self.boolAutoTrade == 0:
-            self.autoTradePushBox.setText("자동매매종료")
-            self.boolAutoTrade = 1
-        else:
-            self.autoTradePushBox.setText("자동매매시작")
-            self.boolAutoTrade = 0
+        def removeAutoTradeCondition(self):
+            print("조건식 제거 함수")
+            check = 0
+            for rowIndex in range(self.autoTradeConditionTableWidget.rowCount()):
+                for colIndex in range(self.autoTradeConditionTableWidget.columnCount()):
+                    if self.autoTradeConditionTableWidget.item(rowIndex, colIndex).isSelected():
+                        check = 1
+                        del self.myModel.autoTradeConditionList[rowIndex]
+                        break
+                    if check == 1:
+                        break
 
+            self.updateAutoTradeConditionTable()
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    myApp = MyBot()
-    myApp.show()
-    app.exec()
+            '''
+                        code = self.autoTradeConditionTableWidget.item(rowIndex, 2).text()
+                        # 데이터 삭제
+                        for itemIndex in range(len(self.myModel.autoTradeConditionList)):
+                            # 리스트와 선택한 화면의 코드번호가 일치한 경우
+                            if self.myModel.autoTradeConditionList[itemIndex].code == code:
+                                del self.myModel.autoTradeConditionList[itemIndex]
+                                break
+                        for rowIndex in range(self.autoTradeConditionTableWidget.rowCount()):
+                            # 화면에 들어간 코드번호와 일치한 경우
+                            if self.autoTradeConditionTableWidget.item(rowIndex, 2).text() == code:
+                                self.autoTradeConditionTableWidget.removeRow(rowIndex)
+                                break
+                    break
+                if check == 1:
+                    break
+            '''
+
+        def updateAutoTradeConditionTable(self):
+            column_head = ["시작시간", "종료시간", "조건식번호", "조건식이름", "자동매매상태"]
+            colCount = len(column_head)
+            rowCount = len(self.myModel.autoTradeConditionList)
+            self.autoTradeConditionTableWidget.setColumnCount(colCount)  # 열
+            self.autoTradeConditionTableWidget.setRowCount(rowCount)  # 행
+            self.autoTradeConditionTableWidget.setHorizontalHeaderLabels(column_head)  # 헤더 삽입
+            self.autoTradeConditionTableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 수정 방지
+
+            for index in range(rowCount):
+                self.autoTradeConditionTableWidget.setItem(index, 0,
+                                                           QTableWidgetItem(str(self.myModel.autoTradeConditionList[
+                                                                                    index].startTime.toString())))
+                self.autoTradeConditionTableWidget.setItem(index, 1,
+                                                           QTableWidgetItem(str(self.myModel.autoTradeConditionList[
+                                                                                    index].endTime.toString())))
+                self.autoTradeConditionTableWidget.setItem(index, 2,
+                                                           QTableWidgetItem(
+                                                               str(self.myModel.autoTradeConditionList[index].code)))
+                self.autoTradeConditionTableWidget.setItem(index, 3,
+                                                           QTableWidgetItem(
+                                                               str(self.myModel.autoTradeConditionList[index].name)))
+                self.autoTradeConditionTableWidget.setItem(index, 4,
+                                                           QTableWidgetItem(str(
+                                                               self.myModel.autoTradeConditionList[
+                                                                   index].autoTradeGubun)))
+
+        def conditionSearch(self):
+            print("조건검색시작 버튼 함수")
+
+            # text = self.conditionSearchPushBox.text()
+            # print(text)
+            # if text == "조건검색시작":
+            #     self.conditionSearchPushBox.setText("중      지")
+            # elif text == "중      지":
+            #     self.conditionSearchPushBox.setText("조건검색시작")
+
+            if self.boolCondition == 0:
+                self.conditionSearchPushBox.setText("조건검색종료")
+                self.boolCondition = 1
+            else:
+                # 시작 상태 체크 후 (종료 -> 시작)
+                self.conditionSearchPushBox.setText("조건검색시작")
+                self.boolCondition = 0
+
+            # 조건식 검색 테이블을 통해 조건번호, 조건이름 호출
+            # row 마다 SendConditionStop() 호출
+            for rowIndex in range(self.autoTradeConditionTableWidget.rowCount()):
+
+                code = self.autoTradeConditionTableWidget.item(rowIndex, 2).text()
+                name = self.autoTradeConditionTableWidget.item(rowIndex, 3).text()
+
+                # 조건 검색 시작시
+                # self.boolCondition 여부에 따라 처리 방안이 다름
+                if self.boolCondition == 1:
+                    # row마다 lRet =  SendCondition() 함수 호출 -> OnReceiveTrCondition() 이벤트 발생
+                    # -> CommKwRqData() 함수를 통해 관심종목데이터(OPTKWFID)tr
+                    # BSTR  strScrNo : 화면번호, BSTR strConditionName : 조건식 이름 , int nIndex 조건식 고유번호,
+                    # int nSearch   // 실시간옵션. 0:조건검색만, 1:조건검색+실시간 조건검색
+                    strScrNo = 7000 + (rowIndex * 100)
+                    lRet = self.kiwoom.dynamicCall("SendCondition(QString, QString, int, int)", str(strScrNo), name,
+                                                   code,
+                                                   0)
+                    # 화면번호 기준으로 종목 (7000 + rowIndex * 100)
+                    if lRet == 1:
+                        print("조건검색정보요청 성공 - ", name)
+                        # 아래와 같이 딕셔너리 형태로 만드는 이유?
+                        # 데이터가 많기 때문에 키 밸류 형태로 저장
+                        self.myModel.conditionItemList[name] = []
+                    else:
+                        print("조건검색정보요청 실패 - ", name)
+
+                else:
+                    # BSTR  strScrNo : 화면번호, BSTR strConditionName : 조건식 이름 , int nIndex 조건식 고유번호
+
+                    strScrNo = 7000 + (rowIndex * 100)
+                    self.kiwoom.dynamicCall("SendConditionStop(QString, QString, int)", strScrNo, name, code)
+                    # 화면번호 기준으로 종목 (7000 + rowIndex * 100)
+                    # row 마다 SendConditionStop() 호출
+
+                time.sleep(0.5)  # 1초에 5번 이상 호출되면 안되기 때문에 슬립을 준다.
+
+        def autoTrade(self):
+            print("자동매매시작 버튼 함수")
+
+            # text = self.autoTradePushBox.text()
+            # print(text)
+            # if text == "자동매매시작":
+            #     self.autoTradePushBox.setText("중      지")
+            # elif text == "중      지":
+            #     self.autoTradePushBox.setText("자동매매시작")
+
+            if self.boolAutoTrade == 0:
+                self.autoTradePushBox.setText("자동매매종료")
+                self.boolAutoTrade = 1
+            else:
+                self.autoTradePushBox.setText("자동매매시작")
+                self.boolAutoTrade = 0
+
+    if __name__ == '__main__':
+        app = QApplication(sys.argv)
+        myApp = MyBot()
+        myApp.show()
+        app.exec()
